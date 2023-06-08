@@ -148,8 +148,8 @@ public class GLControlSettings
     /// Make a perfect shallow copy of this object.
     /// </summary>
     /// <returns>A perfect shallow copy of this GLControlSettings object.</returns>
-    public GLControlSettings Clone()
-        => new GLControlSettings
+    public GLControlSettings Clone() =>
+        new GLControlSettings
         {
             APIVersion = APIVersion,
             AutoLoadBindings = AutoLoadBindings,
@@ -176,8 +176,8 @@ public class GLControlSettings
     /// </summary>
     /// <returns>The NativeWindowSettings to use when constructing a new
     /// NativeWindow.</returns>
-    public NativeWindowSettings ToNativeWindowSettings()
-        => new NativeWindowSettings
+    public NativeWindowSettings ToNativeWindowSettings() =>
+        new NativeWindowSettings
         {
             APIVersion = FixupVersion(APIVersion),
             AutoLoadBindings = AutoLoadBindings,
@@ -194,7 +194,6 @@ public class GLControlSettings
             BlueBits = BlueBits,
             AlphaBits = AlphaBits,
             SrgbCapable = SrgbCapable,
-
             StartFocused = false,
             StartVisible = false,
             WindowBorder = WindowBorder.Hidden,
@@ -208,8 +207,8 @@ public class GLControlSettings
     /// </summary>
     /// <param name="version">A version number.</param>
     /// <returns>The same version number, but with all negative values clipped to 0.</returns>
-    private static Version FixupVersion(Version version)
-        => new Version(
+    private static Version FixupVersion(Version version) =>
+        new Version(
             Math.Max(version.Major, 0),
             Math.Max(version.Minor, 0),
             Math.Max(version.Build, 0),

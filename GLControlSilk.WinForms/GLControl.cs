@@ -149,8 +149,7 @@ public class GLControl : Control
     /// behavior, everywhere except the constructor.  It tries several techniques to
     /// figure out if this is design-time or not, and then it caches the result.
     /// </summary>
-    public bool IsDesignMode
-        => _isDesignMode ??= DetermineIfThisIsInDesignMode();
+    public bool IsDesignMode => _isDesignMode ??= DetermineIfThisIsInDesignMode();
     private bool? _isDesignMode;
 
     #endregion
@@ -168,8 +167,7 @@ public class GLControl : Control
     /// Gets the aspect ratio of this GLControl.
     /// </summary>
     [Description("The aspect ratio of the client area of this GLControl.")]
-    public float AspectRatio
-        => Width / (float)Height;
+    public float AspectRatio => Width / (float)Height;
 
     /// <summary>
     /// Access to native-input properties and methods, for more direct control
@@ -193,10 +191,7 @@ public class GLControl : Control
     /// so we offer this constructor rather than just adding `= null` to the
     /// constructor that does the actual construction work.
     /// </summary>
-    public GLControl()
-        : this(null)
-    {
-    }
+    public GLControl() : this(null) { }
 
     /// <summary>
     /// Constructs a new instance with the specified GLControlSettings.
@@ -210,8 +205,8 @@ public class GLControl : Control
         SetStyle(ControlStyles.AllPaintingInWmPaint, true);
         DoubleBuffered = false;
 
-        _glControlSettings = glControlSettings != null
-            ? glControlSettings.Clone() : new GLControlSettings();
+        _glControlSettings =
+            glControlSettings != null ? glControlSettings.Clone() : new GLControlSettings();
     }
 
     /// <summary>
@@ -317,10 +312,12 @@ public class GLControl : Control
             CreateControl();
 
             if (_nativeWindow == null)
-                throw new InvalidOperationException("Failed to create GLControl."
-                    + " This is usually caused by trying to perform operations on the GLControl"
-                    + " before its containing form has been fully created.  Make sure you are not"
-                    + " invoking methods on it before the Form's constructor has completed.");
+                throw new InvalidOperationException(
+                    "Failed to create GLControl."
+                        + " This is usually caused by trying to perform operations on the GLControl"
+                        + " before its containing form has been fully created.  Make sure you are not"
+                        + " invoking methods on it before the Form's constructor has completed."
+                );
         }
 
         if (_nativeWindow == null && !IsDesignMode)
@@ -344,7 +341,6 @@ public class GLControl : Control
     {
         if (IsDesignMode || _nativeWindow == null)
             return;
-
         unsafe
         {
             if (IsNativeInputEnabled(_nativeWindow))
@@ -381,8 +377,8 @@ public class GLControl : Control
             // other style bits (most of the rest of them could cause trouble).  In
             // particular, this turns off stuff like WS_BORDER and WS_CAPTION and WS_POPUP
             // and so on, any of which GLFW might have turned on for us.
-            IntPtr style = (IntPtr)(long)(Win32.WindowStyles.WS_CHILD
-                | Win32.WindowStyles.WS_DISABLED);
+            IntPtr style = (IntPtr)
+                (long)(Win32.WindowStyles.WS_CHILD | Win32.WindowStyles.WS_DISABLED);
             Win32.SetWindowLongPtr(hWnd, Win32.WindowLongs.GWL_STYLE, style);
 
             // Change the real HWND's extended window styles to be "WS_EX_NOACTIVATE", and
@@ -393,7 +389,10 @@ public class GLControl : Control
             style = (IntPtr)(long)Win32.WindowStylesEx.WS_EX_NOACTIVATE;
             Win32.SetWindowLongPtr(hWnd, Win32.WindowLongs.GWL_EXSTYLE, style);
         }
-        else throw new NotSupportedException("The current operating system is not supported by this control.");
+        else
+            throw new NotSupportedException(
+                "The current operating system is not supported by this control."
+            );
     }
 
     /// <summary>
@@ -420,7 +419,10 @@ public class GLControl : Control
             }
             Win32.SetWindowLongPtr(hWnd, Win32.WindowLongs.GWL_STYLE, style);
         }
-        else throw new NotSupportedException("The current operating system is not supported by this control.");
+        else
+            throw new NotSupportedException(
+                "The current operating system is not supported by this control."
+            );
     }
 
     /// <summary>
@@ -436,7 +438,10 @@ public class GLControl : Control
             IntPtr style = Win32.GetWindowLongPtr(hWnd, Win32.WindowLongs.GWL_STYLE);
             return ((Win32.WindowStyles)(long)style & Win32.WindowStyles.WS_DISABLED) == 0;
         }
-        else throw new NotSupportedException("The current operating system is not supported by this control.");
+        else
+            throw new NotSupportedException(
+                "The current operating system is not supported by this control."
+            );
     }
 
     /// <summary>
@@ -468,9 +473,19 @@ public class GLControl : Control
 
         // Last-ditch attempt:  Is the process named `devenv` or `VisualStudio`?
         // These are bad, hacky tests, but they *can* work sometimes.
-        if (System.Reflection.Assembly.GetExecutingAssembly().Location.Contains("VisualStudio", StringComparison.OrdinalIgnoreCase))
+        if (
+            System.Reflection.Assembly
+                .GetExecutingAssembly()
+                .Location.Contains("VisualStudio", StringComparison.OrdinalIgnoreCase)
+        )
             return true;
-        if (string.Equals(System.Diagnostics.Process.GetCurrentProcess().ProcessName, "devenv", StringComparison.OrdinalIgnoreCase))
+        if (
+            string.Equals(
+                System.Diagnostics.Process.GetCurrentProcess().ProcessName,
+                "devenv",
+                StringComparison.OrdinalIgnoreCase
+            )
+        )
             return true;
 
         // Nope.  Not design mode.  Probably.  Maybe.

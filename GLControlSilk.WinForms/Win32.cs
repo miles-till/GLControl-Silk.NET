@@ -40,7 +40,13 @@ internal static class Win32
         WS_MINIMIZE = 0x20000000,
         WS_MINIMIZEBOX = 0x20000,
         WS_OVERLAPPED = 0x0,
-        WS_OVERLAPPEDWINDOW = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_SIZEFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX,
+        WS_OVERLAPPEDWINDOW =
+            WS_OVERLAPPED
+            | WS_CAPTION
+            | WS_SYSMENU
+            | WS_SIZEFRAME
+            | WS_MINIMIZEBOX
+            | WS_MAXIMIZEBOX,
         WS_POPUP = 0x80000000u,
         WS_POPUPWINDOW = WS_POPUP | WS_BORDER | WS_SYSMENU,
         WS_SIZEFRAME = 0x40000,
@@ -93,15 +99,13 @@ internal static class Win32
 
     #region Miscellaneous Kernel32 stuff
 
-    public static int GetLastError()
-        => Marshal.GetLastWin32Error();     // This alias isn't strictly needed, but it reads better.
-
+    public static int GetLastError() => Marshal.GetLastWin32Error(); // This alias isn't strictly needed, but it reads better.
     #endregion
 
     #region GetWindowLong/SetWindowLong and friends
 
-    public static IntPtr GetWindowLongPtr(IntPtr hWnd, WindowLongs nIndex)
-        => GetWindowLongPtr(hWnd, (int)nIndex);
+    public static IntPtr GetWindowLongPtr(IntPtr hWnd, WindowLongs nIndex) =>
+        GetWindowLongPtr(hWnd, (int)nIndex);
 
     public static IntPtr GetWindowLongPtr(IntPtr hWnd, int nIndex)
     {
@@ -117,8 +121,8 @@ internal static class Win32
     [DllImport("user32.dll", EntryPoint = "GetWindowLongPtr", SetLastError = true)]
     private static extern IntPtr GetWindowLongPtr64(IntPtr hWnd, int nIndex);
 
-    public static IntPtr SetWindowLongPtr(IntPtr hWnd, WindowLongs nIndex, IntPtr dwNewLong)
-        => SetWindowLongPtr(hWnd, (int)nIndex, dwNewLong);
+    public static IntPtr SetWindowLongPtr(IntPtr hWnd, WindowLongs nIndex, IntPtr dwNewLong) =>
+        SetWindowLongPtr(hWnd, (int)nIndex, dwNewLong);
 
     public static IntPtr SetWindowLongPtr(IntPtr hWnd, int nIndex, IntPtr dwNewLong)
     {

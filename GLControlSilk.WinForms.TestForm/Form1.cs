@@ -27,13 +27,12 @@ namespace GLControlSilk.WinForms.TestForm
                 _angle += 0.5f;
                 Render();
             };
-            _timer.Interval = 50;   // 1000 ms per sec / 50 ms per frame = 20 FPS
+            _timer.Interval = 50; // 1000 ms per sec / 50 ms per frame = 20 FPS
             _timer.Start();
 
             // Ensure that the viewport and projection matrix are set correctly initially.
             glControl_Resize(glControl, EventArgs.Empty);
         }
-
 
         private void glControl_Resize(object? sender, EventArgs e)
         {
@@ -44,8 +43,15 @@ namespace GLControlSilk.WinForms.TestForm
 
             GL.Viewport(0, 0, glControl.ClientSize.Width, glControl.ClientSize.Height);
 
-            float aspect_ratio = Math.Max(glControl.ClientSize.Width, 1) / (float)Math.Max(glControl.ClientSize.Height, 1);
-            Matrix4 perpective = Matrix4.CreatePerspectiveFieldOfView(MathHelper.PiOver4, aspect_ratio, 1, 64);
+            float aspect_ratio =
+                Math.Max(glControl.ClientSize.Width, 1)
+                / (float)Math.Max(glControl.ClientSize.Height, 1);
+            Matrix4 perpective = Matrix4.CreatePerspectiveFieldOfView(
+                MathHelper.PiOver4,
+                aspect_ratio,
+                1,
+                64
+            );
             GL.MatrixMode(MatrixMode.Projection);
             GL.LoadMatrix(ref perpective);
         }

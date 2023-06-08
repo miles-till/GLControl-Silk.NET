@@ -42,34 +42,29 @@ internal class NativeInput : INativeInput
     /// Gets the current state of the keyboard as of the last time the window processed
     /// events.
     /// </summary>
-    public KeyboardState KeyboardState
-        => _nativeWindow.KeyboardState;
+    public KeyboardState KeyboardState => _nativeWindow.KeyboardState;
 
     /// <summary>
     /// Gets the current state of the joysticks as of the last time the window processed
     /// events.
     /// </summary>
-    public IReadOnlyList<JoystickState> JoystickStates
-        => _nativeWindow.JoystickStates;
+    public IReadOnlyList<JoystickState> JoystickStates => _nativeWindow.JoystickStates;
 
     /// <summary>
     /// Gets the current state of the mouse as of the last time the window processed
     /// events.
     /// </summary>
-    public MouseState MouseState
-        => _nativeWindow.MouseState;
+    public MouseState MouseState => _nativeWindow.MouseState;
 
     /// <summary>
     /// Gets a value indicating whether any key is down.
     /// </summary>
-    public bool IsAnyKeyDown
-        => _nativeWindow.IsAnyKeyDown;
+    public bool IsAnyKeyDown => _nativeWindow.IsAnyKeyDown;
 
     /// <summary>
     /// Gets a value indicating whether any mouse button is pressed.
     /// </summary>
-    public bool IsAnyMouseButtonDown
-        => _nativeWindow.IsAnyMouseButtonDown;
+    public bool IsAnyMouseButtonDown => _nativeWindow.IsAnyMouseButtonDown;
 
     #endregion
 
@@ -196,8 +191,7 @@ internal class NativeInput : INativeInput
     /// </summary>
     /// <param name="key">The <see cref="Keys">key</see> to check.</param>
     /// <returns><c>true</c> if <paramref name="key"/> is in the down state; otherwise, <c>false</c>.</returns>
-    public bool IsKeyDown(Keys key)
-        => _nativeWindow.IsKeyDown(key);
+    public bool IsKeyDown(Keys key) => _nativeWindow.IsKeyDown(key);
 
     /// <summary>
     /// Gets whether the specified key is pressed in the current frame but released in the previous frame.
@@ -207,8 +201,7 @@ internal class NativeInput : INativeInput
     /// </remarks>
     /// <param name="key">The <see cref="Keys">key</see> to check.</param>
     /// <returns>True if the key is pressed in this frame, but not the last frame.</returns>
-    public bool IsKeyPressed(Keys key)
-        => _nativeWindow.IsKeyPressed(key);
+    public bool IsKeyPressed(Keys key) => _nativeWindow.IsKeyPressed(key);
 
     /// <summary>
     /// Gets whether the specified key is released in the current frame but pressed in the previous frame.
@@ -218,17 +211,14 @@ internal class NativeInput : INativeInput
     /// </remarks>
     /// <param name="key">The <see cref="Keys">key</see> to check.</param>
     /// <returns>True if the key is released in this frame, but pressed the last frame.</returns>
-    public bool IsKeyReleased(Keys key)
-        => _nativeWindow.IsKeyReleased(key);
+    public bool IsKeyReleased(Keys key) => _nativeWindow.IsKeyReleased(key);
 
     /// <summary>
     /// Gets a <see cref="bool" /> indicating whether this button is currently down.
     /// </summary>
     /// <param name="button">The <see cref="MouseButton" /> to check.</param>
     /// <returns><c>true</c> if <paramref name="button"/> is in the down state; otherwise, <c>false</c>.</returns>
-    public bool IsMouseButtonDown(MouseButton button)
-        => _nativeWindow.IsMouseButtonDown(button);
-
+    public bool IsMouseButtonDown(MouseButton button) => _nativeWindow.IsMouseButtonDown(button);
 
     /// <summary>
     /// Gets whether the specified mouse button is pressed in the current frame but released in the previous frame.
@@ -238,8 +228,8 @@ internal class NativeInput : INativeInput
     /// </remarks>
     /// <param name="button">The button to check.</param>
     /// <returns>True if the button is pressed in this frame, but not the last frame.</returns>
-    public bool IsMouseButtonPressed(MouseButton button)
-        => _nativeWindow.IsMouseButtonPressed(button);
+    public bool IsMouseButtonPressed(MouseButton button) =>
+        _nativeWindow.IsMouseButtonPressed(button);
 
     /// <summary>
     /// Gets whether the specified mouse button is released in the current frame but pressed in the previous frame.
@@ -249,8 +239,8 @@ internal class NativeInput : INativeInput
     /// </remarks>
     /// <param name="button">The button to check.</param>
     /// <returns>True if the button is released in this frame, but pressed the last frame.</returns>
-    public bool IsMouseButtonReleased(MouseButton button)
-        => _nativeWindow.IsMouseButtonReleased(button);
+    public bool IsMouseButtonReleased(MouseButton button) =>
+        _nativeWindow.IsMouseButtonReleased(button);
 
     #endregion
 }

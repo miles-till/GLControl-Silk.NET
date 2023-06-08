@@ -11,7 +11,7 @@ internal class DummyGLFWGraphicsContext : IGLFWGraphicsContext
     /// <summary>
     /// The one-and-only instance of this class.
     /// </summary>
-    public static DummyGLFWGraphicsContext Instance { get; }  = new DummyGLFWGraphicsContext();
+    public static DummyGLFWGraphicsContext Instance { get; } = new DummyGLFWGraphicsContext();
 
     /// <summary>
     /// The mandatory WindowPtr, which is always a null handle.
@@ -28,26 +28,20 @@ internal class DummyGLFWGraphicsContext : IGLFWGraphicsContext
     /// <summary>
     /// This can only be constructed internally.
     /// </summary>
-    private DummyGLFWGraphicsContext()
-    {
-    }
+    private DummyGLFWGraphicsContext() { }
 
     /// <summary>
     /// Make this graphics context "current."  This does mostly nothing.
     /// </summary>
-    public void MakeCurrent()
-        => IsCurrent = true;
+    public void MakeCurrent() => IsCurrent = true;
 
     /// <summary>
     /// Make *no* graphics context "current."  This does mostly nothing.
     /// </summary>
-    public void MakeNoneCurrent()
-        => IsCurrent = false;
+    public void MakeNoneCurrent() => IsCurrent = false;
 
     /// <summary>
     /// Swap the displayed buffer.  This does *literally* nothing.
     /// </summary>
-    public void SwapBuffers()
-    {
-    }
+    public void SwapBuffers() { }
 }
