@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            glControl = new OpenTK.WinForms.GLControl();
+            glControl = new GLControl();
             SuspendLayout();
             // 
             // glControl
@@ -59,6 +59,6 @@
 
         #endregion
 
-        private OpenTK.WinForms.GLControl glControl;
+        private GLControl glControl;
     }
 }
