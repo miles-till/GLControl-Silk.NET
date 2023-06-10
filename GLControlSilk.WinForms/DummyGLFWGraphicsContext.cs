@@ -1,4 +1,4 @@
-﻿using OpenTK.Windowing.Desktop;
+﻿using Silk.NET.Core.Contexts;
 
 namespace GLControlSilk.WinForms;
 
@@ -6,24 +6,24 @@ namespace GLControlSilk.WinForms;
 /// At design-time, we don't have a real GLFW graphics context.
 /// We use this stub instead, which does nothing but prevent crashes.
 /// </summary>
-internal class DummyGLFWGraphicsContext : IGLFWGraphicsContext
+internal class DummyGLFWGraphicsContext : IGLContext
 {
     /// <summary>
     /// The one-and-only instance of this class.
     /// </summary>
     public static DummyGLFWGraphicsContext Instance { get; } = new DummyGLFWGraphicsContext();
 
+    public IGLContextSource? Source { get; }
+
     /// <summary>
     /// The mandatory WindowPtr, which is always a null handle.
     /// </summary>
-    public IntPtr WindowPtr => IntPtr.Zero;
+    public nint Handle => IntPtr.Zero;
 
     /// <summary>
     /// A fake IsCurrent flag, which just stores its last usage.
     /// </summary>
     public bool IsCurrent { get; private set; }
-
-    public int SwapInterval { get; set; }
 
     /// <summary>
     /// This can only be constructed internally.
@@ -44,4 +44,21 @@ internal class DummyGLFWGraphicsContext : IGLFWGraphicsContext
     /// Swap the displayed buffer.  This does *literally* nothing.
     /// </summary>
     public void SwapBuffers() { }
+
+    public void SwapInterval(int interval) { }
+
+    public void Clear() { }
+
+    public nint GetProcAddress(string proc, int? slot = null)
+    {
+        return IntPtr.Zero;
+    }
+
+    public bool TryGetProcAddress(string proc, out nint addr, int? slot = null)
+    {
+        addr = IntPtr.Zero;
+        return true;
+    }
+
+    public void Dispose() { }
 }

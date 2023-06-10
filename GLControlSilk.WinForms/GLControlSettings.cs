@@ -1,5 +1,5 @@
-using OpenTK.Windowing.Common;
-using OpenTK.Windowing.Desktop;
+using Silk.NET.GLFW;
+using Silk.NET.Windowing;
 
 namespace GLControlSilk.WinForms;
 
@@ -36,7 +36,7 @@ public class GLControlSettings
     /// as the versioning of OpenGL and OpenGL ES do not match.
     /// </para>
     /// </remarks>
-    public Version APIVersion { get; set; } = new Version(3, 3, 0, 0);
+    public APIVersion APIVersion { get; set; } = GraphicsAPI.Default.Version;
 
     /// <summary>
     /// Gets or sets a value indicating whether or not OpenGL bindings should be automatically loaded
@@ -47,7 +47,7 @@ public class GLControlSettings
     /// <summary>
     /// Gets or sets a value representing the current graphics profile flags.
     /// </summary>
-    public ContextFlags Flags { get; set; } = ContextFlags.Default;
+    public ContextFlags Flags { get; set; } = GraphicsAPI.Default.Flags;
 
     /// <summary>
     /// Gets or sets a value representing the current graphics API profile.
@@ -57,7 +57,7 @@ public class GLControlSettings
     /// This only has an effect on OpenGL 3.2 and higher. On older versions, this setting does nothing.
     /// </para>
     /// </remarks>
-    public ContextProfile Profile { get; set; } = ContextProfile.Core;
+    public ContextProfile Profile { get; set; } = GraphicsAPI.Default.Profile;
 
     /// <summary>
     /// Gets or sets a value representing the current graphics API.
@@ -68,7 +68,7 @@ public class GLControlSettings
     /// do not match.
     /// </para>
     /// </remarks>
-    public ContextAPI API { get; set; } = ContextAPI.OpenGL;
+    public ContextAPI API { get; set; } = GraphicsAPI.Default.API;
 
     /// <summary>
     /// Gets or sets a value indicating whether or not this window is event-driven.
@@ -80,7 +80,7 @@ public class GLControlSettings
     /// <summary>
     /// Gets or sets the context to share.
     /// </summary>
-    public IGLFWGraphicsContext? SharedContext { get; set; }
+    public GlfwContext? SharedContext { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating the number of samples that should be used.
@@ -176,28 +176,29 @@ public class GLControlSettings
     /// </summary>
     /// <returns>The NativeWindowSettings to use when constructing a new
     /// NativeWindow.</returns>
-    public NativeWindowSettings ToNativeWindowSettings() =>
-        new NativeWindowSettings
+    public Silk.NET.Windowing.WindowOptions ToNativeWindowSettings() =>
+        new WindowOptions
         {
-            APIVersion = FixupVersion(APIVersion),
-            AutoLoadBindings = AutoLoadBindings,
-            Flags = Flags,
-            Profile = Profile,
-            API = API,
+            API = new GraphicsAPI(API, Profile, Flags, APIVersion),
             IsEventDriven = IsEventDriven,
             SharedContext = SharedContext,
-            NumberOfSamples = NumberOfSamples,
-            StencilBits = StencilBits,
-            DepthBits = DepthBits,
-            RedBits = RedBits,
-            GreenBits = GreenBits,
-            BlueBits = BlueBits,
-            AlphaBits = AlphaBits,
-            SrgbCapable = SrgbCapable,
-            StartFocused = false,
-            StartVisible = false,
+            Samples = NumberOfSamples,
+            PreferredStencilBufferBits = StencilBits,
+            PreferredDepthBufferBits = DepthBits,
+            PreferredBitDepth = new Silk.NET.Maths.Vector4D<int>(
+                RedBits ?? -1,
+                GreenBits ?? -1,
+                BlueBits ?? -1,
+                AlphaBits ?? -1
+            ),
             WindowBorder = WindowBorder.Hidden,
             WindowState = WindowState.Normal,
+
+            //AutoLoadBindings = AutoLoadBindings,
+            //SrgbCapable = SrgbCapable,
+
+            //StartFocused = false,
+            //StartVisible = false,
         };
 
     /// <summary>

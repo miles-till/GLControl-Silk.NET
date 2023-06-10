@@ -1,4 +1,4 @@
-﻿using OpenTK.Mathematics;
+﻿using Silk.NET.Maths;
 
 namespace GLControlSilk.WinForms;
 
@@ -41,21 +41,21 @@ internal class GLControlDesignTimeRenderer : IDisposable
     /// <summary>
     /// Endpoints that can make a cube.  We only use this in design mode.
     /// </summary>
-    private static (Vector3, Vector3)[] CubeLines { get; } =
-        new (Vector3, Vector3)[]
+    private static (Vector3D<float>, Vector3D<float>)[] CubeLines { get; } =
+        new (Vector3D<float>, Vector3D<float>)[]
         {
-            (new Vector3(-1, -1, -1), new Vector3(+1, -1, -1)),
-            (new Vector3(-1, -1, -1), new Vector3(-1, +1, -1)),
-            (new Vector3(-1, -1, -1), new Vector3(-1, -1, +1)),
-            (new Vector3(+1, -1, -1), new Vector3(+1, +1, -1)),
-            (new Vector3(+1, -1, -1), new Vector3(+1, -1, +1)),
-            (new Vector3(-1, +1, -1), new Vector3(+1, +1, -1)),
-            (new Vector3(-1, +1, -1), new Vector3(-1, +1, +1)),
-            (new Vector3(-1, -1, +1), new Vector3(+1, -1, +1)),
-            (new Vector3(-1, -1, +1), new Vector3(-1, +1, +1)),
-            (new Vector3(+1, +1, +1), new Vector3(+1, +1, -1)),
-            (new Vector3(+1, +1, +1), new Vector3(-1, +1, +1)),
-            (new Vector3(+1, +1, +1), new Vector3(+1, -1, +1)),
+            (new(-1, -1, -1), new(+1, -1, -1)),
+            (new(-1, -1, -1), new(-1, +1, -1)),
+            (new(-1, -1, -1), new(-1, -1, +1)),
+            (new(+1, -1, -1), new(+1, +1, -1)),
+            (new(+1, -1, -1), new(+1, -1, +1)),
+            (new(-1, +1, -1), new(+1, +1, -1)),
+            (new(-1, +1, -1), new(-1, +1, +1)),
+            (new(-1, -1, +1), new(+1, -1, +1)),
+            (new(-1, -1, +1), new(-1, +1, +1)),
+            (new(+1, +1, +1), new(+1, +1, -1)),
+            (new(+1, +1, +1), new(-1, +1, +1)),
+            (new(+1, +1, +1), new(+1, -1, +1)),
         };
 
     /// <summary>
@@ -131,21 +131,21 @@ internal class GLControlDesignTimeRenderer : IDisposable
         // center offset to position it.  That saves a lot of extra multiplies all
         // over this code, since we can use Matrix3 and Vector3 instead of Matrix4
         // and Vector4.  And no, quaternions aren't worth the effort here either.
-        Matrix3 matrix =
-            Matrix3.CreateRotationZ(roll)
-            * Matrix3.CreateRotationY(yaw)
-            * Matrix3.CreateRotationX(pitch)
-            * Matrix3.CreateScale(radius);
+        Matrix3X3<float> matrix =
+            Matrix3X3.CreateRotationZ(roll)
+            * Matrix3X3.CreateRotationY(yaw)
+            * Matrix3X3.CreateRotationX(pitch)
+            * Matrix3X3.CreateScale(radius);
 
         // Draw the edges of the cube in the given color.  Since it's just a single-
         // color wireframe, the order of the edges doesn't matter at all.
         using System.Drawing.Brush brush = new System.Drawing.SolidBrush(color);
         using System.Drawing.Pen pen = new System.Drawing.Pen(brush);
 
-        foreach ((Vector3 start, Vector3 end) in CubeLines)
+        foreach ((Vector3D<float> start, Vector3D<float> end) in CubeLines)
         {
-            Vector3 projStart = start * matrix;
-            Vector3 projEnd = end * matrix;
+            Vector3D<float> projStart = start * matrix;
+            Vector3D<float> projEnd = end * matrix;
 
             graphics.DrawLine(
                 pen,
