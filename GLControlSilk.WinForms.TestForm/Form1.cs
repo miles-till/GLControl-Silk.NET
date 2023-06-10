@@ -1,5 +1,5 @@
-using OpenTK.Graphics.OpenGL;
-using OpenTK.Mathematics;
+using Silk.NET.Maths;
+using Silk.NET.OpenGL;
 
 namespace GLControlSilk.WinForms.TestForm
 {
@@ -7,6 +7,15 @@ namespace GLControlSilk.WinForms.TestForm
     {
         private System.Windows.Forms.Timer _timer = null!;
         private float _angle = 0.0f;
+        private float _aspectRatio = 1.0f;
+
+        private GL? _gl;
+        private Shader? _shader;
+        private readonly List<Face> _faces = new();
+
+        public Matrix4X4<float> Model { get; private set; } = Matrix4X4<float>.Identity;
+        public Matrix4X4<float> View { get; private set; } = Matrix4X4<float>.Identity;
+        public Matrix4X4<float> Projection { get; private set; } = Matrix4X4<float>.Identity;
 
         public Form1()
         {
@@ -15,6 +24,8 @@ namespace GLControlSilk.WinForms.TestForm
 
         private void glControl_Load(object sender, EventArgs e)
         {
+            _gl = glControl.CreateOpenGL();
+
             // Make sure that when the GLControl is resized or needs to be painted,
             // we update our projection matrix or re-render its contents, respectively.
             glControl.Resize += glControl_Resize;
@@ -32,6 +43,121 @@ namespace GLControlSilk.WinForms.TestForm
 
             // Ensure that the viewport and projection matrix are set correctly initially.
             glControl_Resize(glControl, EventArgs.Empty);
+
+            // Set up View matrix
+            View = Matrix4X4.CreateLookAt(
+                new Vector3D<float>(0, 5, 5),
+                new Vector3D<float>(0, 0, 0),
+                new Vector3D<float>(0, 1, 0)
+            );
+
+            // Set up Shader
+            _shader = new Shader(_gl, "shader.vert", "shader.frag");
+            // Create cube
+            // csharpier-ignore-start
+            _faces.Add(
+                new Face(
+                    _gl,
+                    Color.Silver,
+                    new float[]
+                    {
+                        -1.0f, -1.0f, -1.0f,
+                        -1.0f,  1.0f, -1.0f,
+                         1.0f,  1.0f, -1.0f,
+                         1.0f, -1.0f, -1.0f
+                    },
+                    new uint[] {
+                        0, 1, 3,
+                        1, 2, 3
+                    }
+                )
+            );
+            _faces.Add(
+                new Face(
+                    _gl,
+                    Color.Honeydew,
+                    new float[]
+                    {
+                        -1.0f, -1.0f, -1.0f,
+                         1.0f, -1.0f, -1.0f,
+                         1.0f, -1.0f,  1.0f,
+                        -1.0f, -1.0f,  1.0f
+                    },
+                    new uint[] {
+                        0, 1, 3,
+                        1, 2, 3
+                    }
+                )
+            );
+            _faces.Add(
+                new Face(
+                    _gl,
+                    Color.Moccasin,
+                    new float[]
+                    {
+                        -1.0f, -1.0f, -1.0f,
+                        -1.0f, -1.0f,  1.0f,
+                        -1.0f,  1.0f,  1.0f,
+                        -1.0f,  1.0f, -1.0f
+                    },
+                    new uint[] {
+                        0, 1, 3,
+                        1, 2, 3
+                    }
+                )
+            );
+            _faces.Add(
+                new Face(
+                    _gl,
+                    Color.IndianRed,
+                    new float[]
+                    {
+                        -1.0f, -1.0f, 1.0f,
+                         1.0f, -1.0f, 1.0f,
+                         1.0f,  1.0f, 1.0f,
+                        -1.0f,  1.0f, 1.0f
+                    },
+                    new uint[] {
+                        0, 1, 3,
+                        1, 2, 3
+                    }
+                )
+            );
+            _faces.Add(
+                new Face(
+                    _gl,
+                    Color.PaleVioletRed,
+                    new float[]
+                    {
+                        -1.0f, 1.0f, -1.0f,
+                        -1.0f, 1.0f,  1.0f,
+                         1.0f, 1.0f,  1.0f,
+                         1.0f, 1.0f, -1.0f
+                    },
+                    new uint[] {
+                        0, 1, 3,
+                        1, 2, 3
+                    }
+                )
+            );
+            _faces.Add(
+                new Face(
+                    _gl,
+                    Color.ForestGreen,
+                    new float[]
+                    {
+                        1.0f, -1.0f, -1.0f,
+                        1.0f,  1.0f, -1.0f,
+                        1.0f,  1.0f,  1.0f,
+                        1.0f, -1.0f,  1.0f
+                    },
+                    new uint[] {
+                        0, 1, 3,
+                        1, 2, 3
+                    }
+                )
+            );
+            // csharpier-ignore-end
         }
 
         private void glControl_Resize(object? sender, EventArgs e)
@@ -41,19 +167,23 @@ namespace GLControlSilk.WinForms.TestForm
             if (glControl.ClientSize.Height == 0)
                 glControl.ClientSize = new System.Drawing.Size(glControl.ClientSize.Width, 1);
 
-            GL.Viewport(0, 0, glControl.ClientSize.Width, glControl.ClientSize.Height);
+            _gl?.Viewport(
+                0,
+                0,
+                (uint)glControl.ClientSize.Width,
+                (uint)glControl.ClientSize.Height
+            );
 
-            float aspect_ratio =
+            _aspectRatio =
                 Math.Max(glControl.ClientSize.Width, 1)
                 / (float)Math.Max(glControl.ClientSize.Height, 1);
-            Matrix4 perpective = Matrix4.CreatePerspectiveFieldOfView(
+
+            Projection = Matrix4X4.CreatePerspectiveFieldOfView(
                 MathHelper.PiOver4,
-                aspect_ratio,
+                _aspectRatio,
                 1,
                 64
             );
-            GL.MatrixMode(MatrixMode.Projection);
-            GL.LoadMatrix(ref perpective);
         }
 
         private void glControl_Paint(object? sender, PaintEventArgs e)
@@ -63,58 +193,23 @@ namespace GLControlSilk.WinForms.TestForm
 
         private void Render()
         {
-            glControl.MakeCurrent();
+            _gl?.ClearColor(Color.MidnightBlue);
+            _gl?.Enable(EnableCap.DepthTest);
 
-            GL.ClearColor(Color4.MidnightBlue);
-            GL.Enable(EnableCap.DepthTest);
+            Model = Matrix4X4.CreateRotationY(_angle);
 
-            Matrix4 lookat = Matrix4.LookAt(0, 5, 5, 0, 0, 0, 0, 1, 0);
-            GL.MatrixMode(MatrixMode.Modelview);
-            GL.LoadMatrix(ref lookat);
+            _gl?.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-            GL.Rotate(_angle, 0.0f, 1.0f, 0.0f);
+            _shader?.Use();
+            _shader?.SetUniform("uModel", Model);
+            _shader?.SetUniform("uView", View);
+            _shader?.SetUniform("uProjection", Projection);
 
-            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-
-            GL.Begin(PrimitiveType.Quads);
-
-            GL.Color4(Color4.Silver);
-            GL.Vertex3(-1.0f, -1.0f, -1.0f);
-            GL.Vertex3(-1.0f, 1.0f, -1.0f);
-            GL.Vertex3(1.0f, 1.0f, -1.0f);
-            GL.Vertex3(1.0f, -1.0f, -1.0f);
-
-            GL.Color4(Color4.Honeydew);
-            GL.Vertex3(-1.0f, -1.0f, -1.0f);
-            GL.Vertex3(1.0f, -1.0f, -1.0f);
-            GL.Vertex3(1.0f, -1.0f, 1.0f);
-            GL.Vertex3(-1.0f, -1.0f, 1.0f);
-
-            GL.Color4(Color4.Moccasin);
-            GL.Vertex3(-1.0f, -1.0f, -1.0f);
-            GL.Vertex3(-1.0f, -1.0f, 1.0f);
-            GL.Vertex3(-1.0f, 1.0f, 1.0f);
-            GL.Vertex3(-1.0f, 1.0f, -1.0f);
-
-            GL.Color4(Color4.IndianRed);
-            GL.Vertex3(-1.0f, -1.0f, 1.0f);
-            GL.Vertex3(1.0f, -1.0f, 1.0f);
-            GL.Vertex3(1.0f, 1.0f, 1.0f);
-            GL.Vertex3(-1.0f, 1.0f, 1.0f);
-
-            GL.Color4(Color4.PaleVioletRed);
-            GL.Vertex3(-1.0f, 1.0f, -1.0f);
-            GL.Vertex3(-1.0f, 1.0f, 1.0f);
-            GL.Vertex3(1.0f, 1.0f, 1.0f);
-            GL.Vertex3(1.0f, 1.0f, -1.0f);
-
-            GL.Color4(Color4.ForestGreen);
-            GL.Vertex3(1.0f, -1.0f, -1.0f);
-            GL.Vertex3(1.0f, 1.0f, -1.0f);
-            GL.Vertex3(1.0f, 1.0f, 1.0f);
-            GL.Vertex3(1.0f, -1.0f, 1.0f);
-
-            GL.End();
+            foreach (var face in _faces)
+            {
+                _shader?.SetUniform("uColor", face.Color);
+                face.Render();
+            }
 
             glControl.SwapBuffers();
         }

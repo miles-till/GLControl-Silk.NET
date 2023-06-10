@@ -33,14 +33,14 @@
             // 
             // glControl
             // 
-            glControl.API = OpenTK.Windowing.Common.ContextAPI.OpenGL;
-            glControl.APIVersion = new Version(3, 3, 0, 0);
+            glControl.API = Silk.NET.Windowing.ContextAPI.OpenGL;
+            glControl.APIVersion = new Silk.NET.Windowing.APIVersion(3, 3);
             glControl.Dock = DockStyle.Fill;
-            glControl.Flags = OpenTK.Windowing.Common.ContextFlags.Default;
+            glControl.Flags = Silk.NET.Windowing.ContextFlags.Default;
             glControl.IsEventDriven = true;
             glControl.Location = new Point(0, 0);
             glControl.Name = "glControl";
-            glControl.Profile = OpenTK.Windowing.Common.ContextProfile.Compatability;
+            glControl.Profile = Silk.NET.Windowing.ContextProfile.Compatability;
             glControl.Size = new Size(800, 450);
             glControl.TabIndex = 0;
             glControl.Text = "glControl1";
