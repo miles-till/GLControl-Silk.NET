@@ -7,6 +7,7 @@ using Silk.NET.Windowing;
 using Silk.NET.Windowing.Glfw;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
 namespace GLControlSilk.WinForms;
 
@@ -27,7 +28,7 @@ public class GLControl : Control
     /// The underlying native window.  This will be reparented to be a child of
     /// this control.
     /// </summary>
-    private IWindow _nativeWindow = null!;
+    private IWindow? _nativeWindow = null;
 
     // Indicates that OnResize was called before OnHandleCreated.
     // To avoid issues with missing OpenGL contexts, we suppress
@@ -42,6 +43,8 @@ public class GLControl : Control
     private GLControlDesignTimeRenderer? _designTimeRenderer;
 
     private bool _nativeWindowFocused = false;
+    private Glfw? _glfw = null;
+    private GlfwNativeWindow? _glfwNativeWindow = null;
 
     #endregion
 
@@ -253,7 +256,7 @@ public class GLControl : Control
     /// </summary>
     /// <param name="glControlSettings">The settings to use for
     /// the new GLFW window.</param>
-    private void CreateNativeWindow(GLControlSettings glControlSettings)
+    private unsafe void CreateNativeWindow(GLControlSettings glControlSettings)
     {
         if (IsDesignMode)
             return;
@@ -266,9 +269,13 @@ public class GLControl : Control
         nativeWindowSettings.WindowState = WindowState.Normal;
 
         _nativeWindow = Window.Create(nativeWindowSettings);
+        _glfw = GlfwWindowing.GetExistingApi(_nativeWindow);
+
         _nativeWindow.FocusChanged += OnNativeWindowFocused;
         _nativeWindow.Load += () => OnLoad(EventArgs.Empty);
         _nativeWindow.Initialize();
+
+        _glfwNativeWindow = new GlfwNativeWindow(_glfw, (WindowHandle*)_nativeWindow.Handle);
 
         NonportableReparent(_nativeWindow);
 
@@ -359,7 +366,7 @@ public class GLControl : Control
         if (IsNativeInputEnabled(_nativeWindow))
         {
             // Focus should be on the NativeWindow inside the GLControl.
-            GlfwProvider.GLFW.Value.FocusWindow((WindowHandle*)_nativeWindow.Handle);
+            _glfw?.FocusWindow((WindowHandle*)_nativeWindow.Handle);
         }
         else
         {
@@ -379,10 +386,15 @@ public class GLControl : Control
     {
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
-            IntPtr hWnd = nativeWindow.Handle;
+            IntPtr hWnd = _glfwNativeWindow?.Win32?.Hwnd ?? IntPtr.Zero;
 
             // Reparent the real HWND under this control.
-            Win32.SetParent(hWnd, Handle);
+            var h = Win32.SetParent(hWnd, Handle);
+
+            if (h == IntPtr.Zero)
+            {
+                Console.WriteLine($"Win32.SetParent error code: {Win32.GetLastError()}");
+            }
 
             // Change the real HWND's window styles to be "WS_CHILD | WS_DISABLED" (i.e.,
             // a child of some container, with no input support), and turn off *all* the
@@ -415,7 +427,7 @@ public class GLControl : Control
     {
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
-            IntPtr hWnd = nativeWindow.Handle;
+            IntPtr hWnd = _glfwNativeWindow?.Win32?.Hwnd ?? IntPtr.Zero;
 
             // Tweak the WS_DISABLED style bit for the native window.  When enabled,
             // it will eat all input events directed to it.  When disabled, events will
@@ -446,10 +458,7 @@ public class GLControl : Control
     {
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
-            IntPtr hWnd = nativeWindow.Handle;
-            if (hWnd == IntPtr.Zero)
-                return false;
-
+            IntPtr hWnd = _glfwNativeWindow?.Win32?.Hwnd ?? IntPtr.Zero;
             IntPtr style = Win32.GetWindowLongPtr(hWnd, Win32.WindowLongs.GWL_STYLE);
             return ((Win32.WindowStyles)(long)style & Win32.WindowStyles.WS_DISABLED) == 0;
         }
@@ -539,6 +548,9 @@ public class GLControl : Control
         {
             _nativeWindow.Dispose();
             _nativeWindow = null!;
+            _glfwNativeWindow = null;
+            _glfw?.Dispose();
+            _glfw = null;
         }
     }
 
@@ -632,15 +644,15 @@ public class GLControl : Control
     /// <summary>
     /// Resize the native window to fit this control.
     /// </summary>
-    private void ResizeNativeWindow()
+    private unsafe void ResizeNativeWindow()
     {
         if (IsDesignMode)
             return;
 
-        if (_nativeWindow != null)
-        {
-            _nativeWindow.Size = new Vector2D<int>(Width, Height);
-        }
+        if (_nativeWindow is null)
+            return;
+
+        _nativeWindow.Size = new(Width, Height);
     }
 
     /// <summary>
@@ -710,6 +722,9 @@ public class GLControl : Control
     /// </summary>
     public GL CreateOpenGL()
     {
+        if (_nativeWindow is null)
+            throw new Exception("Native window has not been created yet!");
+
         return _nativeWindow.CreateOpenGL();
     }
 
@@ -722,7 +737,7 @@ public class GLControl : Control
             return;
 
         EnsureCreated();
-        _nativeWindow.SwapBuffers();
+        _nativeWindow?.SwapBuffers();
     }
 
     /// <summary>
@@ -738,7 +753,7 @@ public class GLControl : Control
             return;
 
         EnsureCreated();
-        _nativeWindow.MakeCurrent();
+        _nativeWindow?.MakeCurrent();
     }
 
     /// <summary>
@@ -755,6 +770,9 @@ public class GLControl : Control
     public IInputContext EnableNativeInput()
     {
         EnsureCreated();
+
+        if (_nativeWindow is null)
+            throw new Exception("Native window has not been created yet!");
 
         _nativeInput ??= _nativeWindow.CreateInput();
 
@@ -779,6 +797,9 @@ public class GLControl : Control
     public void DisableNativeInput()
     {
         EnsureCreated();
+
+        if (_nativeWindow is null)
+            throw new Exception("Native window has not been created yet!");
 
         if (IsNativeInputEnabled(_nativeWindow))
         {
