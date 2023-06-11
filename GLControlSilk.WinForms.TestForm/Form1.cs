@@ -30,6 +30,7 @@ namespace GLControlSilk.WinForms.TestForm
             // we update our projection matrix or re-render its contents, respectively.
             glControl.Resize += glControl_Resize;
             glControl.Paint += glControl_Paint;
+            glControl.Disposed += glControl_Disposed;
 
             // Redraw the screen every 1/20 of a second.
             _timer = new System.Windows.Forms.Timer();
@@ -212,6 +213,11 @@ namespace GLControlSilk.WinForms.TestForm
             }
 
             glControl.SwapBuffers();
+        }
+
+        private void glControl_Disposed(object? sender, EventArgs e)
+        {
+            _timer.Dispose();
         }
     }
 }
