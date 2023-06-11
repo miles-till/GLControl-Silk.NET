@@ -84,7 +84,7 @@ internal class Shader : IDisposable
         {
             throw new Exception($"{name} uniform not found on shader.");
         }
-        _gl.Uniform4(location, value.R, value.G, value.B, value.A);
+        _gl.Uniform4(location, value.R / 255f, value.G / 255f, value.B / 255f, value.A / 255f);
     }
 
     public void Dispose()
