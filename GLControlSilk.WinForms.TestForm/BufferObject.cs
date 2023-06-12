@@ -7,9 +7,9 @@ internal class BufferObject<TDataType> : IDisposable where TDataType : unmanaged
 {
     //Our handle, buffertype and the GL instance this class will use, these are private because they have no reason to be public.
     //Most of the time you would want to abstract items to make things like this invisible.
-    private uint _handle;
-    private BufferTargetARB _bufferType;
-    private GL _gl;
+    private readonly uint _handle;
+    private readonly BufferTargetARB _bufferType;
+    private readonly GL _gl;
 
     public unsafe BufferObject(GL gl, Span<TDataType> data, BufferTargetARB bufferType)
     {

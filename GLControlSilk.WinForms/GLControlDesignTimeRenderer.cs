@@ -116,7 +116,7 @@ internal class GLControlDesignTimeRenderer : IDisposable
     /// <param name="yaw">The yaw (rotation around the Y axis) of the cube.</param>
     /// <param name="pitch">The pitch (rotation around the X axis) of the cube.</param>
     /// <param name="roll">The roll (rotation around the Z axis) of the cube.</param>
-    private void DrawCube(
+    private static void DrawCube(
         System.Drawing.Graphics graphics,
         System.Drawing.Color color,
         float cx,

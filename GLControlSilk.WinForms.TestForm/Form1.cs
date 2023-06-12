@@ -22,15 +22,15 @@ namespace GLControlSilk.WinForms.TestForm
             InitializeComponent();
         }
 
-        private void glControl_Load(object sender, EventArgs e)
+        private void GLControlLoad(object sender, EventArgs e)
         {
             _gl = glControl.CreateOpenGL();
 
             // Make sure that when the GLControl is resized or needs to be painted,
             // we update our projection matrix or re-render its contents, respectively.
-            glControl.Resize += glControl_Resize;
-            glControl.Paint += glControl_Paint;
-            glControl.Disposed += glControl_Disposed;
+            glControl.Resize += GLControlResize;
+            glControl.Paint += GLControlPaint;
+            glControl.Disposed += GLControlDisposed;
 
             // Redraw the screen every 1/20 of a second.
             _timer = new System.Windows.Forms.Timer();
@@ -43,7 +43,7 @@ namespace GLControlSilk.WinForms.TestForm
             _timer.Start();
 
             // Ensure that the viewport and projection matrix are set correctly initially.
-            glControl_Resize(glControl, EventArgs.Empty);
+            GLControlResize(glControl, EventArgs.Empty);
 
             // Set up View matrix
             View = Matrix4X4.CreateLookAt(
@@ -161,7 +161,7 @@ namespace GLControlSilk.WinForms.TestForm
             // csharpier-ignore-end
         }
 
-        private void glControl_Resize(object? sender, EventArgs e)
+        private void GLControlResize(object? sender, EventArgs e)
         {
             glControl.MakeCurrent();
 
@@ -187,7 +187,7 @@ namespace GLControlSilk.WinForms.TestForm
             );
         }
 
-        private void glControl_Paint(object? sender, PaintEventArgs e)
+        private void GLControlPaint(object? sender, PaintEventArgs e)
         {
             Render();
         }
@@ -215,7 +215,7 @@ namespace GLControlSilk.WinForms.TestForm
             glControl.SwapBuffers();
         }
 
-        private void glControl_Disposed(object? sender, EventArgs e)
+        private void GLControlDisposed(object? sender, EventArgs e)
         {
             _timer.Dispose();
         }

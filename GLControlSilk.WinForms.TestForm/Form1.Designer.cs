@@ -44,7 +44,7 @@
             glControl.Size = new Size(800, 450);
             glControl.TabIndex = 0;
             glControl.Text = "glControl1";
-            glControl.Load += glControl_Load;
+            glControl.Load += GLControlLoad;
             // 
             // Form1
             // 

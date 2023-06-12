@@ -209,7 +209,7 @@ public class GLControlSettings
     /// <param name="version">A version number.</param>
     /// <returns>The same version number, but with all negative values clipped to 0.</returns>
     private static Version FixupVersion(Version version) =>
-        new Version(
+        new(
             Math.Max(version.Major, 0),
             Math.Max(version.Minor, 0),
             Math.Max(version.Build, 0),

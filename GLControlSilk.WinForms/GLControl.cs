@@ -22,7 +22,7 @@ public class GLControl : Control
     /// <summary>
     /// The OpenGL configuration of this control.
     /// </summary>
-    private GLControlSettings _glControlSettings;
+    private readonly GLControlSettings _glControlSettings;
 
     /// <summary>
     /// The underlying native window.  This will be reparented to be a child of
@@ -562,7 +562,7 @@ public class GLControl : Control
     /// This private object is used as the reference for the 'Load' handler in
     /// the Events collection, and is only needed if you use the 'Load' event.
     /// </summary>
-    private static readonly object EVENT_LOAD = new object();
+    private static readonly object EVENT_LOAD = new();
 
     /// <summary>
     /// An event hook, triggered when the control is created for the first time.
@@ -689,7 +689,7 @@ public class GLControl : Control
     /// These EventArgs are used as a safety check to prevent unexpected recursion
     /// in OnGotFocus.
     /// </summary>
-    private static readonly EventArgs _noRecursionSafetyArgs = new EventArgs();
+    private static readonly EventArgs _noRecursionSafetyArgs = new();
 
     /// <summary>
     /// This event is raised when something sets the focus to the NativeWindow.
