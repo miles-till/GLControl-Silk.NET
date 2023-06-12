@@ -197,7 +197,7 @@ namespace GLControlSilk.WinForms.TestForm
             _gl?.ClearColor(Color.MidnightBlue);
             _gl?.Enable(EnableCap.DepthTest);
 
-            Model = Matrix4X4.CreateRotationY(_angle);
+            Model = Matrix4X4.CreateRotationY(MathHelper.DegreesToRadians(_angle));
 
             _gl?.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
